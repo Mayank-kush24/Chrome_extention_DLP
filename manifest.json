@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Google Sheets Data Protection",
+  "version": "1.0.0",
+  "description": "Prevents copying, cutting, selecting, and right-clicking data from Google Sheets. Security friction layer for internal use.",
+  
+  "permissions": [
+    "storage",
+    "notifications",
+    "identity"
+  ],
+  
+  "host_permissions": [
+    "https://docs.google.com/spreadsheets/*",
+    "https://api.ipify.org/*"
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Google Sheets Data Protection"
+  },
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": ["https://docs.google.com/spreadsheets/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "all_frames": true
+    }
+  ],
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["admin.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
+

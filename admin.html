@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Console - Sheets Protection</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f5f5f5;
+      color: #202124;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: #ea4335;
+      color: white;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 24px;
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #ea4335;
+    }
+
+    .btn-primary:hover {
+      background: #f5f5f5;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .login-form {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 40px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-form h2 {
+      margin-bottom: 24px;
+      color: #202124;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #202124;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #4285f4;
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e8eaed;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #5f6368;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      color: #202124;
+    }
+
+    .tab.active {
+      color: #4285f4;
+      border-bottom-color: #4285f4;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 8px;
+    }
+
+    .stat-card h3 {
+      font-size: 24px;
+      font-weight: 500;
+      color: #202124;
+      margin-bottom: 4px;
+    }
+
+    .stat-card p {
+      font-size: 14px;
+      color: #5f6368;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #e8eaed;
+    }
+
+    th {
+      background: #f8f9fa;
+      font-weight: 500;
+      font-size: 13px;
+      color: #5f6368;
+      text-transform: uppercase;
+    }
+
+    td {
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-pending {
+      background: #fef7e0;
+      color: #b06000;
+    }
+
+    .status-approved {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-denied {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .status-active {
+      background: #e8f5e9;
+      color: #2e7d32;
+    }
+
+    .status-removed {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-approve {
+      background: #34a853;
+      color: white;
+    }
+
+    .btn-approve:hover {
+      background: #2d8e47;
+    }
+
+    .btn-deny {
+      background: #ea4335;
+      color: white;
+    }
+
+    .btn-deny:hover {
+      background: #d33b2c;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-group label {
+      font-size: 12px;
+      color: #5f6368;
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 6px 10px;
+      border: 1px solid #dadce0;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #5f6368;
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="loginContainer">
+    <div class="login-form">
+      <h2>Admin Login</h2>
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" placeholder="Enter admin password">
+      </div>
+      <button class="btn btn-primary" id="loginButton" style="width: 100%;">Login</button>
+      <div id="loginError" style="color: #ea4335; margin-top: 12px; font-size: 13px; display: none;"></div>
+    </div>
+  </div>
+
+  <div class="container" id="adminContainer" style="display: none;">
+    <div class="header">
+      <h1>Admin Console</h1>
+      <div class="header-actions">
+        <button class="btn btn-secondary" id="exportLogsButton">Export Logs</button>
+        <button class="btn btn-secondary" id="logoutButton">Logout</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="tabs">
+        <button class="tab active" data-tab="requests">Requests</button>
+        <button class="tab" data-tab="logs">Audit Logs</button>
+        <button class="tab" data-tab="sessions">Active Sessions</button>
+        <button class="tab" data-tab="devices">Devices</button>
+      </div>
+
+      <div class="tab-content active" id="requestsTab">
+        <div class="stats">
+          <div class="stat-card">
+            <h3 id="pendingCount">0</h3>
+            <p>Pending Requests</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="totalRequests">0</h3>
+            <p>Total Requests</p>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>URL</th>
+                <th>Duration</th>
+                <th>Requested</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="requestsTableBody">
+              <tr>
+                <td colspan="6" class="empty-state">Loading requests...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="logsTab">
+        <div class="filters">
+          <div class="filter-group">
+            <label>Type</label>
+            <select id="logTypeFilter">
+              <option value="">All</option>
+              <option value="blocked">Blocked</option>
+              <option value="allowed">Allowed</option>
+              <option value="request">Request</option>
+              <option value="approval">Approval</option>
+              <option value="denial">Denial</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>From Date</label>
+            <input type="date" id="logFromDate">
+          </div>
+          <div class="filter-group">
+            <label>To Date</label>
+            <input type="date" id="logToDate">
+          </div>
+          <div class="filter-group">
+            <label>User ID</label>
+            <input type="text" id="logUserIdFilter" placeholder="Filter by user">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Timestamp</th>
+                <th>Type</th>
+                <th>Action</th>
+                <th>User ID</th>
+                <th>URL</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody id="logsTableBody">
+              <tr>
+                <td colspan="6" class="empty-state">Loading logs...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="sessionsTab">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>URL</th>
+                <th>Request ID</th>
+                <th>Expires At</th>
+                <th>Time Remaining</th>
+              </tr>
+            </thead>
+            <tbody id="sessionsTableBody">
+              <tr>
+                <td colspan="5" class="empty-state">Loading sessions...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="tab-content" id="devicesTab">
+        <div class="stats">
+          <div class="stat-card">
+            <h3 id="activeDevicesCount">0</h3>
+            <p>Active Devices</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="removedDevicesCount">0</h3>
+            <p>Removed Devices</p>
+          </div>
+          <div class="stat-card">
+            <h3 id="totalDevicesCount">0</h3>
+            <p>Total Devices</p>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="filter-group">
+            <label>Status</label>
+            <select id="deviceStatusFilter">
+              <option value="">All</option>
+              <option value="active">Active</option>
+              <option value="removed">Removed</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>User ID</label>
+            <input type="text" id="deviceUserIdFilter" placeholder="Filter by user">
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Email</th>
+                <th>Browser</th>
+                <th>OS</th>
+                <th>IP Address</th>
+                <th>First Seen</th>
+                <th>Last Seen</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="devicesTableBody">
+              <tr>
+                <td colspan="8" class="empty-state">Loading devices...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
+
